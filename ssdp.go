@@ -45,7 +45,7 @@ type searchReader interface {
 // to discover new devices. This function will return an array of SearchReponses
 // discovered.
 func Search(st string, mx time.Duration) ([]SearchResponse, error) {
-	conn, err := listenForSearchResponses()
+	conn, err := net.ListenUDP("udp", &net.UDPAddr{})
 	if err != nil {
 		return nil, err
 	}
@@ -59,11 +59,6 @@ func Search(st string, mx time.Duration) ([]SearchResponse, error) {
 	}
 
 	return readSearchResponses(conn, mx)
-}
-
-func listenForSearchResponses() (*net.UDPConn, error) {
-	serverAddr, _ := net.ResolveUDPAddr("udp", "0.0.0.0:"+strconv.Itoa(Port))
-	return net.ListenUDP("udp", serverAddr)
 }
 
 func buildSearchRequest(st string, mx time.Duration) ([]byte, *net.UDPAddr) {
